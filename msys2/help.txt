@@ -1,0 +1,16 @@
+# 1. 删除错误的配置文件
+rm vcpkg-configuration.json  # 如果存在
+
+# 2. 设置环境变量
+export VCPKG_DEFAULT_TRIPLET=x64-mingw-ucrt-static
+export VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-ucrt-static
+
+# 3. 验证
+vcpkg list
+vcpkg update
+
+# 不设置环境变量时候更新
+vcpkg upgrade --no-dry-run --host-triplet=x64-mingw-ucrt-static
+
+# cmake
+cmake ../.. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-mingw-ucrt-static

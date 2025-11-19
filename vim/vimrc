@@ -8,6 +8,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'preservim/nerdcommenter'
 Plug 'LunarWatcher/auto-pairs'
+# Plug 'andymass/vim-matchup'
 Plug 'luochen1990/rainbow'
 Plug 'Yggdroot/indentLine'
 Plug 'monkoose/vim9-stargate'
@@ -25,6 +26,7 @@ Plug 'voldikss/LeaderF-floaterm'
 Plug 'voldikss/vim-floaterm'
 Plug 'StarfishC/vim-tasks'
 Plug 'github/copilot.vim'
+Plug 'ojroques/vim-oscyank', {'branch': 'main'}
 
 plug#end()
 
@@ -40,6 +42,7 @@ set expandtab
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set fileformats=unix,dos
 set nofoldenable
 set backspace=2
 set hidden
@@ -124,13 +127,6 @@ if &term =~ '^xterm'
     &t_EI ..= "\<Esc>[1 q"
     # insert mode
     &t_SI ..= "\<Esc>[3 q"
-endif
-
-if has("unix") && system("uname -r") =~ "microsoft"
-    augroup Yank
-        autocmd!
-        autocmd TextYankPost * call system('win32yank.exe -i --crlf', getreg('"'))
-    augroup END
 endif
 
 autocmd FileType * setlocal formatoptions=tcq
@@ -300,6 +296,7 @@ g:coc_global_extensions = ['coc-marketplace',
                             \  'coc-clangd',
                             \  'coc-webview',
                             \  'coc-markdown-preview-enhanced',
+                            \  'coc-yaml',
                             \  '@hexuhua/coc-copilot'
                             \ ]
 
@@ -417,6 +414,7 @@ g:AutoPairsShortcutToggle = '<M-p>'
 g:AutoPairsShortcutJump = '<M-]>'
 
 
+
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # rainbow
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -424,7 +422,12 @@ g:rainbow_active = 1
 g:rainbow_conf = {
     'separately': {
         'cmake': 0,
-        'tsl': {'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/']},
+        'tsl': {
+            'parentheses': [
+                'start=/(\([*]\)\@!/ end=/)/ fold',
+                'start=/\[/ end=/\]/ fold'
+            ]
+        },
     },
 }
 
@@ -483,6 +486,13 @@ g:copilot_no_tab_map = true
 imap <silent><expr> <C-A> copilot#Accept("\<CR>")
 imap <C-N> <Plug>(copilot-next)
 imap <C-P> <Plug>(copilot-previous)
+
+
+
+#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# vim-oscyank
+#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd TextYankPost * if v:event.operator == 'y' && v:event.regname == '' | execute 'OSCYankRegister "' | endif
 
 
 

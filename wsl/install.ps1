@@ -29,6 +29,10 @@ Start-Sleep -Seconds 8
 $distros = Get-ChildItem -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss | ForEach-Object { (Get-ItemProperty -Path $_.PSPath).DistributionName }
 
 foreach ($distro in $distros) {
+    if (-not $distro -or $distro.Trim() -eq "") {
+        Write-Warning "跳过空的发行版名称"
+        continue
+    }
     $name = $distro.ToLower()
     $path = Join-Path $cpath $name
     $install_sh = Join-Path $path "install.sh"

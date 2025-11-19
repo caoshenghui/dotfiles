@@ -71,7 +71,9 @@ root_config() {
     # 3. 安装基础软件包
     if [[ -f "$SCRIPT_DIR/packages.txt" ]]; then
         echo "安装系统软件包..."
-        pacman -S --needed --noconfirm --disable-download-timeout - < "$SCRIPT_DIR/packages.txt"
+        # pacman -S --needed --noconfirm --disable-download-timeout - < "$SCRIPT_DIR/packages.txt"
+        # 使用 xargs 分批处理
+        cat "$SCRIPT_DIR/packages.txt" | xargs -n 1 -I {} sh -c 'sudo pacman -S --needed --noconfirm "{}" || echo "Failed: {}"'
     fi
 
     # 4. 配置 zsh (系统级)

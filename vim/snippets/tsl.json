@@ -1,34 +1,287 @@
 {
-  // Place your snippets for C++ here. Each snippet is defined under a snippet name and has a prefix, body and
-  // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
-  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the
-  // same ids are connected.
-  // Example:
-  "function1": {
-    "prefix": "func1",
-    "body": [
-      "Function $1($2);$0"
-    ]
-  },
-  "function2": {
-    "prefix": "func2",
-    "body": [
-      "Function $1($2);",
-      "Begin",
-      "    $0",
-      "End;"
-    ]
-  },
-  "property1": {
-    "prefix": "pro1",
-    "body": [
-      "property $1 read Read$2;$0"
-    ]
-  },
-  "property2": {
-    "prefix": "pro2",
-    "body": [
-      "property $1 read Read$2 write Write$3;$0"
-    ]
-  }
+    "If Statement": {
+        "prefix": "if",
+        "body": [
+            "if ${1:condition} then",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "If statement"
+    },
+    "If-Else Statement": {
+        "prefix": "ifelse",
+        "body": [
+            "if ${1:condition} then",
+            "begin",
+            "\t$2",
+            "end",
+            "else",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "If-else statement"
+    },
+    "If-ElseIf-Else Statement": {
+        "prefix": "ifelif",
+        "body": [
+            "if ${1:condition1} then",
+            "begin",
+            "\t$2",
+            "end",
+            "else if ${3:condition2} then",
+            "begin",
+            "\t$4",
+            "end",
+            "else",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "If-elseif-else statement"
+    },
+    "For Loop (To)": {
+        "prefix": "for",
+        "body": [
+            "for ${1:i} := ${2:0} to ${3:10} do",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "For loop with counter"
+    },
+    "For Loop (DownTo)": {
+        "prefix": "fordown",
+        "body": [
+            "for ${1:i} := ${2:10} downto ${3:0} do",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "For loop with counter (downto)"
+    },
+    "For-In Loop": {
+        "prefix": "forin",
+        "body": [
+            "for ${1:key}, ${2:value} in ${3:collection} do",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "For-in loop"
+    },
+    "While Loop": {
+        "prefix": "while",
+        "body": [
+            "while ${1:condition} do",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "While loop"
+    },
+    "Repeat-Until Loop": {
+        "prefix": "repeat",
+        "body": [
+            "repeat",
+            "\t$0",
+            "until ${1:condition};"
+        ],
+        "description": "Repeat-until loop"
+    },
+    "Case Statement": {
+        "prefix": "case",
+        "body": [
+            "case ${1:expression} of",
+            "\t${2:value1}:",
+            "\tbegin",
+            "\t\t${3:statements}",
+            "\tend;",
+            "\t${4:value2}:",
+            "\tbegin",
+            "\t\t${5:statements}",
+            "\tend;",
+            "else",
+            "begin",
+            "\t$0",
+            "end",
+            "end;"
+        ],
+        "description": "Case statement"
+    },
+    "Try-Except Block": {
+        "prefix": "try",
+        "body": [
+            "try",
+            "\t$1",
+            "except",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Try-except block"
+    },
+    "Function Declaration": {
+        "prefix": "funcdecl",
+        "body": [
+            "function ${1:functionName}(${2:})${3:: ${4:returnType}};$0"
+        ],
+        "description": "Function declaration only"
+    },
+    "Function Implementation": {
+        "prefix": "func",
+        "body": [
+            "function ${1:functionName}(${2:})${3:: ${4:returnType}};",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Function implementation"
+    },
+    "Function with Parameters": {
+        "prefix": "funcparam",
+        "body": [
+            "function ${1:functionName}(${2:param1}: ${3:type1}; ${4:param2}: ${5:type2})${6:: ${7:returnType}};",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Function with typed parameters"
+    },
+    "Function with Var Parameters": {
+        "prefix": "funcvar",
+        "body": [
+            "function ${1:functionName}(var ${2:param1}: ${3:type1}; ${4:param2}: ${5:type2})${6:: ${7:returnType}};",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Function with var/out parameters"
+    },
+    "Anonymous Function": {
+        "prefix": "anonfunc",
+        "body": [
+            "function(${1:})${2:: ${3:returnType}}",
+            "begin",
+            "\t$0",
+            "end"
+        ],
+        "description": "Anonymous function"
+    },
+    "Unit Module": {
+        "prefix": "unit",
+        "body": [
+            "unit ${1:UnitName};",
+            "",
+            "interface",
+            "\t$2",
+            "",
+            "implementation",
+            "\t$0",
+            "",
+            "end."
+        ],
+        "description": "Unit module structure"
+    },
+    "Unit with Initialization": {
+        "prefix": "unitfull",
+        "body": [
+            "unit ${1:UnitName};",
+            "",
+            "interface",
+            "\t${2:// public declarations}",
+            "",
+            "implementation",
+            "\t${3:// implementation}",
+            "",
+            "initialization",
+            "\t${4:// initialization code}",
+            "",
+            "finalization",
+            "\t${5:// cleanup code}",
+            "",
+            "end."
+        ],
+        "description": "Complete unit with initialization and finalization"
+    },
+    "Class Definition": {
+        "prefix": "class",
+        "body": [
+            "type ${1:ClassName} = class${2:(${3:ParentClass})}",
+            "\t${4:public}",
+            "\t\t$0",
+            "end;"
+        ],
+        "description": "Class definition"
+    },
+    "Class with Public/Private": {
+        "prefix": "classfull",
+        "body": [
+            "type ${1:ClassName} = class${2:(${3:ParentClass})}",
+            "\tpublic",
+            "\t\tfunction ${4:methodName}(${5:})${6:: ${7:returnType}};",
+            "\t\t$0",
+            "\tprotected",
+            "\t\t",
+            "\tprivate",
+            "\t\t",
+            "end;"
+        ],
+        "description": "Class with public/protected/private sections"
+    },
+    "Class Method Implementation": {
+        "prefix": "classmethod",
+        "body": [
+            "function ${1:ClassName}.${2:methodName}(${3:})${4:: ${5:returnType}};",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Class method implementation"
+    },
+    "Class Method with Override": {
+        "prefix": "methodoverride",
+        "body": [
+            "function ${1:methodName}(${2:})${3:: ${4:returnType}};",
+            "override;",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Override method in class"
+    },
+    "Class Method with Virtual": {
+        "prefix": "methodvirtual",
+        "body": [
+            "function ${1:methodName}(${2:})${3:: ${4:returnType}};",
+            "virtual;",
+            "begin",
+            "\t$0",
+            "end;"
+        ],
+        "description": "Virtual method in class"
+    },
+    "Property Declaration": {
+        "prefix": "prop",
+        "body": [
+            "property ${1:propertyName}: ${2:type} read ${3:getter} write ${4:setter};$0"
+        ],
+        "description": "Property with getter and setter"
+    },
+    "Property Read Only": {
+        "prefix": "propread",
+        "body": [
+            "property ${1:propertyName}: ${2:type} read ${3:getter};$0"
+        ],
+        "description": "Read-only property"
+    },
+    "Begin-End Block": {
+        "prefix": "begin",
+        "body": [
+            "begin",
+            "\t$0",
+            "end"
+        ],
+        "description": "Begin-end block"
+    }
 }

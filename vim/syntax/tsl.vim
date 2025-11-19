@@ -69,91 +69,80 @@ syn keyword tslMathConstant inf nan
 # todo
 syn keyword tslTodo FIXME NOTE NOTES TODO XXX contained
 
+# Identifier
+syn match tslIdentifier     '\h\w*'
+
+# Operators and delimiters
+syn match tslOperator       '[+\-*/<>=!&|^~%]'
+syn match tslDelimiter      '[,;:.@?$]'
+
 # Function definitions
 syn match tslFuncName        '\%(\h\w*\.\)\?\h\w*' contained nextgroup=tslFuncParams skipwhite contains=tslTypeNameInFunc,tslDotInFunc
 syn match tslTypeNameInFunc  '\h\w*\ze\.\h\w*' contained
 syn match tslDotInFunc       '\.' contained
-syn match tslFuncName        '\.\@<=\h\w*' contained
 
 syn region tslFuncParams
     \ matchgroup=Delimiter
     \ start='('
     \ end=')'
     \ contained
-    \ contains=tslParam,tslParamType,tslParamSep,tslNumber,tslString,tslPropertyChain
+    \ contains=tslParam,tslParamType,tslParamSep,tslNumber,tslString,tslPropertyChain,tslOperator
     \ nextgroup=tslReturnType skipwhite
 
-syn match tslParam          '\h\w*' contained nextgroup=tslParamType skipnl skipwhite
+syn match tslParam          '\h\w*' contained nextgroup=tslParamType skipwhite
 syn match tslParamType      ':\s*[^;,)=]*' contained contains=tslColon
 syn match tslReturnType     ':\s*[^;]*' contained contains=tslColon
 syn match tslParamSep       '[;,]' contained
 syn match tslColon          ':' contained
 
-# property chain
-syn match tslPropertyChain  '\h\w*\%(\.\h\w*\)\+\>' contains=tslObjectName,tslPropertyDot,tslPropertyName
-syn match tslObjectName     '\h\w*\ze\.\h\w*' contained
+# Property chain
+syn match tslPropertyChain  '\.\h\w*' contains=tslPropertyDot,tslPropertyName
 syn match tslPropertyDot    '\.' contained
-syn match tslPropertyName   '\.\@<=\h\w*\%(\ze\.\|\ze\s*[^(]\|\ze\s*$\)' contained
+syn match tslPropertyName   '\h\w*' contained
 
 # Function calls
-syn match tslFuncCallName   '\%(\<\%(function\|procedure\)\s\+\%(\h\w*\.\)\?\)\@<!\h\w*\ze\s*('
-    \ containedin=ALLBUT,tslFuncParams,tslPropertyChain,tslFunction,tslFuncName,tslFuncNamePart,tslComment,tslString,tslRawString
+syn match tslFuncCallName   '\h\w*\ze\s*(' containedin=tslPropertyChain
 
-syn region tslFuncCall
-    \ start='\h\w*\s*(\zs'
-    \ end='\ze)'
-    \ contains=tslFuncCallName,tslFuncCall,tslNamedParam,tslPositionalParam,tslString,tslRawString,tslNumber,tslIdentifier,tslOperator,tslParamSep
-    \ transparent
 
-syn match tslNamedParam     '\%((\|;\s*\)\zs\h\w*\s*:\s*[^;,)]*' contained
-    \ contains=tslParamName,tslParamColon,tslParamValue
-
-syn match tslParamName      '\h\w*\ze\s*:' contained
-syn match tslParamColon     ':' contained
-syn match tslParamValue     ':\s*\zs[^;,)]*' contained
-    \ contains=tslString,tslNumber,tslIdentifier,tslOperator,tslFuncCall,tslFuncCallName
-
-syn match tslPositionalParam '[^;,():]*' contained
-    \ contains=tslString,tslNumber,tslIdentifier,tslOperator,tslFuncCall,tslFuncCallName
-
-# variable declaration
-syn match tslVarDeclWithTag '\]\@<=\s*\h\w*'
+# Variable declaration
+syn match tslVarDeclWithTag '\]\@<=\s*\h\w*\ze\s*:\%(=\)\@!'
     \ nextgroup=tslVarTypeDecl skipwhite
     \ contains=tslVarName
 
-syn match tslVarDeclStart   '\%(^\s*\|;\s*\)\zs\h\w*\%(\s*\[\)\@!'
+syn match tslVarDeclStart   '\%(^\s*\|;\s*\)\zs\h\w*\ze\s*:\%(=\)\@!'
     \ nextgroup=tslVarTypeDecl skipwhite
     \ contains=tslVarName
 
 syn match tslVarName        '\h\w*' contained
-syn region tslVarTypeDecl 
+syn region tslVarTypeDecl
     \ matchgroup=tslVarDelimiter start=':\%(=\)\@!' end=';'
     \ contained keepend oneline
     \ contains=tslVarType
-syn match tslVarType '[^;]*' contained
-
-# Operators and delimiters
-syn match tslOperator       '[+\-*/<>=!&|^~%]'
-syn match tslDelimiter      '[()[\]{},;:.@?]'
+syn match tslVarType        '[^;]*' contained
+# 冒号的情况
+# 1. 简单赋值a := 1; 不需要匹配
+# 2. 三元表达式a ? b : c; 不需要匹配
+# 3. 普通类型变量声明 a: string; b: array of number; c: obj.A; 匹配:;中的字符，包括.和空格
+# 4. 声明类型时候有tag，比如[werkref]a: string; 不需要匹配[xxx]，只需要和3一样匹配
+# 5. 变量声明时候带初始化a: number = 1; :=之间的内容是类型，=之后的内容由tslnumber,tslstring等匹配
+# 6. gloabl var 等是关键字，global a: string = "123"; 不能把global匹配为identifier
+# 7. 多变量声明, global a, b: number = 1; // 需要匹配的类型是: =之间的number
+# 8. 不能匹配到函数调用的指定参数模式func(a: 123; b: "sss");
 
 # Comments
 syn match  tslComment '//.*$' contains=tslTodo,@Spell
-syn region tslComment start='(\*' end='\*)' contains=tslTodo,@Spell keepend
 syn region tslComment start='{' end='}' contains=tslTodo,@Spell keepend
+syn region tslComment start='(\*' end='\*)' contains=tslTodo,@Spell keepend
 
 # Strings
-syn region tslString start=+[uU]\=\z(['"]\)+ end='\z1' skip='\\\\\|\\\z1'
-syn region tslRawString start=+[uU]\=[rR]\z(['"]\)+ end='\z1' skip='\\\\\|\\\z1'
+syn region tslString start=+[uU]\=\z(['"]\)+ end='\z1' skip='\\.'
+syn region tslRawString start=+[uU]\=[rR]\z(['"]\)+ end='\z1'
 
 # Numbers
-syn match tslNumber '\<0[oO]\=\o\+[Ll]\=\>'
 syn match tslNumber '\<0[xX]\x\+[Ll]\=\>'
+syn match tslNumber '\<0[oO]\o\+[Ll]\=\>'
 syn match tslNumber '\<0[bB][01]\+[Ll]\=\>'
-syn match tslNumber '\<\%([1-9]\d*\|0\)[Ll]\=\>'
-syn match tslNumber '\<\d\+[jJ]\>'
-syn match tslNumber '\<\d\+[eE][+-]\=\d\+[jJ]\=\>'
-syn match tslNumber '\<\d\+\.\%([eE][+-]\=\d\+\)\=[jJ]\=\%(\W\|$\)\@='
-syn match tslNumber '\%(^\|\W\)\zs\d*\.\d\+\%([eE][+-]\=\d\+\)\=[jJ]\=\>'
+syn match tslNumber '\<\d\+\%(\.\d*\)\=\%([eE][+-]\=\d\+\)\=[jJlL]\=\>'
 
 
 # Highlight links
@@ -161,7 +150,7 @@ hi def link tslProgramStructure Statement
 hi def link tslModuleStructure Statement
 hi def link tslPrimitiveType Type
 hi def link tslClassType Statement
-hi def link tslClassModifier Identifier
+hi def link tslClassModifier StorageClass
 hi def link tslAccessModifier Statement
 hi def link tslPropertyAccessor Operator
 hi def link tslConstructor Special
@@ -185,15 +174,15 @@ hi def link tslSqlOperator Special
 hi def link tslSystemKeyword Special
 hi def link tslCallingConvention Special
 hi def link tslBuiltinVar Constant
-hi def link tslBuiltinFunction Constant
+hi def link tslBuiltinFunction Special
 hi def link tslBoolean Boolean
 hi def link tslNull Constant
 hi def link tslMathConstant Number
 
-# 其他元素的高亮链接保持不变
-hi def link tslObjectName Type
 hi def link tslPropertyDot Operator
 hi def link tslPropertyName Special
+
+hi def link tslFuncCallName Function
 
 hi def link tslFuncName Function
 hi def link tslTypeNameInFunc Type
@@ -206,11 +195,7 @@ hi def link tslColon Delimiter
 hi def link tslVarName Identifier
 hi def link tslVarType Type
 
-hi def link tslFuncCallName Function
-hi def link tslCallParam Identifier
-hi def link tslCallValue Type
-hi def link tslCallSep Delimiter
-
+hi def link tslIdentifier PreProc
 hi def link tslOperator Operator
 hi def link tslDelimiter Delimiter
 hi def link tslTodo Todo

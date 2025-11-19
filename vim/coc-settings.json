@@ -33,8 +33,14 @@
     "event": "\uea86",
     "operator": "\ueb64",
     "typeParameter": "\uea92",
-    "default": "\ue7a3"
+    "default": "??"
   },
+  "suggest.formatItems": [
+    "kind",
+    "abbr",
+    "menu",
+    "shortcut"
+  ],
   "diagnostic.refreshOnInsertMode": true,
   "diagnostic.enableMessage": "never",
   "diagnostic.virtualText": true,
@@ -45,7 +51,6 @@
   "list.floatPreview": true,
   "semanticTokens.enable": true,
   "signature.preferShownAbove": false,
-  "coc.preferences.enableMessageDialog": true,
   "cmake.lsp.enable": true,
   "cmake.lsp.serverPath": "cmake-language-server",
   "yank.enableCompletion": false,
@@ -65,8 +70,9 @@
   "languageserver": {
     "tsl-server": {
       "command": "tsl-server",
-      "args": ["--log=info", "--log-stderr"],
-      "filetypes": ["tsl", "tsf"]
+      "args": ["--log=info", "--log=stderr", "--interpreter=/mnt/c/Programs/Tinysoft/TSLGen2/"],
+      "filetypes": ["tsl", "tsf"],
+      "trace.service": "verbose"
     }
   }
 }
